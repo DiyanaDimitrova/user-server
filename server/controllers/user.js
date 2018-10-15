@@ -1,5 +1,7 @@
 // controller about users
 const constants = require("../config/constants");
+const validator = require("../utils/validator");
+
 let User = require("../models/User");
 const {
   getAllUsersError,
@@ -30,13 +32,22 @@ module.exports = {
   // create user
   createUser: (req, res) => {
     let { body: user } = req;
-    User.create(user)
-      .then(user => {
-        res.json({ user, message: getCreateUserSuccess });
-      })
-      .catch(err => {
-        res.status(500).json({ message: getCreateUserError });
-      });
+    const { email, givenName, familyName } = user;
+    if (
+      validator.isValidName(givenName) &&
+      validator.isValidName(familyName) &&
+      validator.isValidEmail(email)
+    ) {
+      User.create(user)
+        .then(user => {
+          res.json({ user, message: getCreateUserSuccess });
+        })
+        .catch(err => {
+          res.status(500).json({ message: getCreateUserError });
+        });
+    } else {
+      //   console.log("NOT FOUND");
+    }
   },
 
   // retrieve user by id

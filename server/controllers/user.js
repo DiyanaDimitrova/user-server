@@ -11,7 +11,8 @@ const {
   updateUserSuccess,
   updateUserError,
   deleteUserSuccess,
-  deleteUserError
+  deleteUserError,
+  invalidInput
 } = constants;
 
 module.exports = {
@@ -46,43 +47,57 @@ module.exports = {
           res.status(500).json({ message: getCreateUserError });
         });
     } else {
-      //   console.log("NOT FOUND");
+      res.status(500).json({ message: invalidInput });
     }
   },
 
   // retrieve user by id
   getUser: (req, res) => {
-    User.findById(req.params.id)
-      .then(user => {
-        res.json({ user });
-      })
-      .catch(err => {
-        res.status(err.statusCode || 500).json({ message: getUserError });
-      });
+    const { id } = req.params;
+    if (id) {
+      User.findById(req.params.id)
+        .then(user => {
+          res.json({ user });
+        })
+        .catch(err => {
+          res.status(err.statusCode || 500).json({ message: getUserError });
+        });
+    } else {
+      res.status(500).json({ message: invalidInput });
+    }
   },
 
   // update properties of the user
   updateUser: (req, res) => {
     let { body: user } = req;
     let { id } = req.params;
-    User.findByIdAndUpdate(id, { $set: user }, { new: true })
-      .exec()
-      .then(user => {
-        res.json({ user, message: updateUserSuccess });
-      })
-      .catch(err => {
-        res.status(err.statusCode || 500).json({ message: updateUserError });
-      });
+    if (id && user) {
+      User.findByIdAndUpdate(id, { $set: user }, { new: true })
+        .exec()
+        .then(user => {
+          res.json({ user, message: updateUserSuccess });
+        })
+        .catch(err => {
+          res.status(err.statusCode || 500).json({ message: updateUserError });
+        });
+    } else {
+      res.status(500).json({ message: invalidInput });
+    }
   },
 
   // delete user
   deleteUser: (req, res) => {
-    User.findByIdAndRemove(req.params.id)
-      .then(user => {
-        res.json({ user, message: deleteUserSuccess });
-      })
-      .catch(err => {
-        res.status(err.statusCode || 500).json({ message: deleteUserError });
-      });
+    const { id } = req.params;
+    if (id) {
+      User.findByIdAndRemove(req.params.id)
+        .then(user => {
+          res.json({ user, message: deleteUserSuccess });
+        })
+        .catch(err => {
+          res.status(err.statusCode || 500).json({ message: deleteUserError });
+        });
+    } else {
+      res.status(500).json({ message: invalidInput });
+    }
   }
 };

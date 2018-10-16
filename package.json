@@ -9,8 +9,8 @@
   "scripts": {
     "lint": "eslint server/*",
     "start": "nodemon index.js",
-    "coverage": "istanbul cover _mocha -- -u exports -R spec --exit \"./server/tests/*.spec.js\"",
-    "test": "node ./node_modules/mocha/bin/mocha --timeout 3000 --recursive --exit \"./server/**/*.spec.js*\""
+    "coverage": "istanbul cover _mocha -- --check-leaks --timeout 10000  -u exports -R spec --exit \"./server/tests/*.spec.js\"",
+    "test": "node ./node_modules/mocha/bin/mocha --timeout 10000 --recursive --exit \"./server/**/*.spec.js*\""
   },
   "license": "MIT",
   "dependencies": {

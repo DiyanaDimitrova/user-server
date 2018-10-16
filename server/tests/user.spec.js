@@ -15,9 +15,9 @@ let expect = chai.expect;
 chai.use(chaiHttp);
 
 describe("User Controller", () => {
-  beforeEach(done => {
+  before(done => {
     User.remove({}, err => {
-      err && console.log(err);
+      console.log(err);
       done();
     });
   });
@@ -43,9 +43,10 @@ describe("User Controller", () => {
           done();
         });
     });
-    it("it should not create users if email is not provided", done => {
+    it("it should not create users", done => {
       const user = {
-        givenName: "sisi",
+        email: "sisi@gmail.com",
+        givenName: "si",
         familyName: "sisi"
       };
 
@@ -67,9 +68,9 @@ describe("User Controller", () => {
   describe("/GET All Users", () => {
     it("it should return all users", done => {
       let user = new User({
-        email: "sisi@gmail.com",
-        givenName: "sisi",
-        familyName: "sisi"
+        email: "didi@gmail.com",
+        givenName: "didi",
+        familyName: "didi"
       });
 
       User.create(user).then(user => {
@@ -87,7 +88,7 @@ describe("User Controller", () => {
     it("it should not return all users", done => {
       chai
         .request(server)
-        .get("/user?test=1234")
+        .get("/user?email=bnb")
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
@@ -102,9 +103,9 @@ describe("User Controller", () => {
   describe("/GET User By ID", () => {
     it("it should return user based on ID", done => {
       let user = new User({
-        email: "sisi@gmail.com",
-        givenName: "sisi",
-        familyName: "sisi"
+        email: "fifi@gmail.com",
+        givenName: "fifi",
+        familyName: "fifi"
       });
 
       User.create(user).then(user => {
@@ -144,23 +145,23 @@ describe("User Controller", () => {
   describe("/PUT User By ID", () => {
     it("it should update user based on ID", done => {
       let user = new User({
-        email: "sisi@gmail.com",
-        givenName: "sisi",
-        familyName: "sisi"
+        email: "gigi@gmail.com",
+        givenName: "gigi",
+        familyName: "gigi"
       });
 
       User.create(user).then(user => {
         chai
           .request(server)
           .put("/user/" + user.id)
-          .send({ email: "didi@gmail.com" })
+          .send({ email: "wiwi@gmail.com" })
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a("object");
             res.body.should.have.property("user");
             res.body.user.should.have
               .property("email")
-              .to.equal("didi@gmail.com");
+              .to.equal("wiwi@gmail.com");
             res.body.user.should.have
               .property("givenName")
               .to.equal(user.givenName);
@@ -190,9 +191,9 @@ describe("User Controller", () => {
   describe("/DELETE User By ID", () => {
     it("it should delete user based on ID", done => {
       let user = new User({
-        email: "sisi@gmail.com",
-        givenName: "sisi",
-        familyName: "sisi"
+        email: "kiki@gmail.com",
+        givenName: "kiki",
+        familyName: "kiki"
       });
 
       User.create(user).then(user => {
@@ -239,6 +240,12 @@ describe("User Controller", () => {
           res.should.have.property("text").to.equal("Not Found");
           done();
         });
+    });
+  });
+  after(done => {
+    User.remove({}, err => {
+      if (err) console.log(err);
+      done();
     });
   });
 });

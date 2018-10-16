@@ -15,5 +15,10 @@ module.exports = {
     rootPath: rootPath,
     db: `mongodb://${user}:${password}@ds231643.mlab.com:31643/he-test`,
     port: 3001
+  },
+  production: {
+    rootPath: rootPath,
+    db: "mongodb://didi:didi@ds243805.mlab.com:43805/rise-art",
+    port: process.env.PORT
   }
 };

@@ -17,7 +17,7 @@ app.use(
 db.initializeDB();
 routes.getRoutes(app);
 
-app.listen(config.port, () =>
+app.listen(config.port || 5000, () =>
   console.log(`User Management app listening on port ${config.port}!`)
 );
 

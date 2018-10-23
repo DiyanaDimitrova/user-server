@@ -1,7 +1,7 @@
 {
   "name": "rise-art-server",
   "version": "1.0.0",
-  "description": "Server for Holiday Extras task",
+  "description": "Server for User Management",
   "main": "index.js",
   "jest": {
     "verbose": true
@@ -19,11 +19,8 @@
     "chai-http": "^4.2.0",
     "express": "^4.16.3",
     "istanbul": "^0.4.5",
-    "jest": "^23.6.0",
-    "json-loader": "^0.5.4",
     "mocha": "^5.2.0",
     "mongoose": "^5.3.2",
-    "nodemon": "^1.11.0",
-    "supertest": "^3.3.0"
+    "nodemon": "^1.11.0"
   }
 }

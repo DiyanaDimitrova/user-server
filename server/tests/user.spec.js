@@ -14,7 +14,7 @@ let expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe("User Controller", () => {
+describe("User Management User Controller", () => {
   before(done => {
     User.remove({}, err => {
       console.log(err);

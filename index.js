@@ -18,7 +18,7 @@ db.initializeDB();
 routes.getRoutes(app);
 
 app.listen(config.port, () =>
-  console.log(`Holiday Extras app listening on port ${config.port}!`)
+  console.log(`User Management app listening on port ${config.port}!`)
 );
 
 module.exports = app;

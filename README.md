@@ -1,4 +1,4 @@
-# HE-server
+# user-server
 
 ## Setup
 

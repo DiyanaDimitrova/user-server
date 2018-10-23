@@ -5,7 +5,6 @@ mongoose.Promise = global.Promise;
 
 module.exports = {
   initializeDB: () => {
-    mongoose.set("useFindAndModify", false);
     mongoose.connect(
       config.db,
       { useNewUrlParser: true, useFindAndModify: false }
@@ -16,7 +15,7 @@ module.exports = {
       if (err) {
         console.log(err);
       }
-      console.log(`Holiday Extras MongoDB is ready `);
+      console.log(`User Management database is ready `);
     });
 
     db.on("error", err => console.log("Database error: " + err));

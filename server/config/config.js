@@ -19,6 +19,6 @@ module.exports = {
   production: {
     rootPath: rootPath,
     db: "mongodb://didi:didi@ds243805.mlab.com:43805/rise-art",
-    port: process.env.PORT
+    port: 3001
   }
 };

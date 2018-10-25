@@ -3,13 +3,20 @@
 ## Setup
 
 ```
-$ npm install
+$ yarn install
 ```
 
 ## Running
 
 ```
-$ npm start
+$ yarn start
+```
+
+## Testing
+
+```
+$ yarn test
+$ yarn coverage
 ```
 
 # License

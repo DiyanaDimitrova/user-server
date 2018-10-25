@@ -7,7 +7,7 @@ module.exports = {
   initializeDB: () => {
     mongoose.connect(
       config.db,
-      { useNewUrlParser: true, useFindAndModify: false }
+      { useNewUrlParser: true }
     );
 
     let db = mongoose.connection;
@@ -15,7 +15,7 @@ module.exports = {
       if (err) {
         console.log(err);
       }
-      console.log(`User Management database is ready `);
+      console.log(`User Management database is ready!`);
     });
 
     db.on("error", err => console.log("Database error: " + err));

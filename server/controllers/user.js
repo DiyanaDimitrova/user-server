@@ -12,7 +12,8 @@ const {
   updateUserError,
   deleteUserSuccess,
   deleteUserError,
-  invalidInput
+  invalidInput,
+  noUser
 } = constants;
 
 module.exports = {
@@ -21,7 +22,7 @@ module.exports = {
     User.find(req.query)
       .then(users => {
         if (users.length === 0) {
-          throw new Error("No user Found");
+          throw new Error(noUser);
         }
         res.json({ users: users });
       })

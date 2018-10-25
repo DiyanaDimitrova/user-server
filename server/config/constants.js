@@ -9,3 +9,4 @@ module.exports.updateUserError = "User could not be updated!";
 module.exports.deleteUserSuccess = "User is deleted successfully!";
 module.exports.deleteUserError = "User could not be deleted!";
 module.exports.invalidInput = "The provided data is not valid!";
+module.exports.noUser = "No user Found";

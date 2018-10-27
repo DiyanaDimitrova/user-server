@@ -49,6 +49,22 @@ User Management API
 | PUT /user/:id    | Update user based on ID |
 | DELETE /user/:id | Remove user based on ID |
 
+# Docker
+
+You need to have installed docker on your machine!
+
+To build image execute the following command:
+
+```
+$ docker build -t <name> .
+```
+
+To run execute the following command:
+
+```
+$ docker run -p 3001:3001 -d <name>
+```
+
 # License
 
 MIT

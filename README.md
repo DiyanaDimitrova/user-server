@@ -49,11 +49,11 @@ User Management API
 | PUT /user/:id    | Update user based on ID |
 | DELETE /user/:id | Remove user based on ID |
 
-# Docker
+## Docker
 
 You need to have installed docker on your machine!
 
-To build image execute the following command:
+To build image locally execute the following command:
 
 ```
 $ docker build -t <name> .

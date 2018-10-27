@@ -1,12 +1,13 @@
-FROM node:6
+FROM node:8
 
-RUN mkdir /user-server
 WORKDIR /user-server
 
-COPY package.json .
+COPY package*.json ./
 
 RUN npm install
 
 COPY . .
 
-CMD ["npm", "start"]
+EXPOSE 3001
+
+CMD [ "npm", "start" ]

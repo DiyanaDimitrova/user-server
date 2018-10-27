@@ -1,8 +1,8 @@
 // controller about users
 const constants = require("../config/constants");
 const validator = require("../utils/validator");
+const User = require("../models/User");
 
-let User = require("../models/User");
 const {
   getAllUsersError,
   getCreateUserSuccess,
@@ -68,7 +68,7 @@ module.exports = {
     }
   },
 
-  // update properties of the user
+  // update properties of user
   updateUser: (req, res) => {
     let { body: user } = req;
     let { id } = req.params;

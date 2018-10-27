@@ -1,6 +1,7 @@
 // routes, exposed by the project
 const controllers = require("../controllers");
 const constants = require("./constants");
+
 module.exports = {
   getRoutes: app => {
     // user routes
@@ -12,7 +13,7 @@ module.exports = {
 
     app.all("*", (req, res) => {
       res.status(404);
-      res.send("Not Found");
+      res.send(constants.notFound);
       res.end();
     });
   }

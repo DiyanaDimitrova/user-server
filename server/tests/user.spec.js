@@ -1,65 +1,89 @@
 process.env.NODE_ENV = "test";
-
-let mongoose = require("mongoose");
-let User = require("../models/User");
-
-let mocha = require("mocha");
-let chai = require("chai");
-let chaiHttp = require("chai-http");
-let server = require("../../index");
-let describe = mocha.describe;
-let it = mocha.it;
-let should = chai.should();
-let expect = chai.expect;
-
+const mongoose = require("mongoose");
+const User = require("../models/User");
+const constants = require("../config/constants");
+const mocha = require("mocha");
+const chai = require("chai");
+const chaiHttp = require("chai-http");
+const server = require("../../index");
+const describe = mocha.describe;
+const it = mocha.it;
+const should = chai.should();
+const expect = chai.expect;
+const {
+  getAllUsersError,
+  getCreateUserSuccess,
+  getCreateUserError,
+  getUserError,
+  updateUserSuccess,
+  updateUserError,
+  deleteUserSuccess,
+  deleteUserError,
+  invalidInput,
+  noUser,
+  notFound
+} = constants;
 chai.use(chaiHttp);
+
+const FAKE_ID = "5bc34397665471414e51f";
+const FAKE_QUERY_PARAM = "email=bnb";
+const FAKE_PATH = "fgf";
 
 describe("User Management User Controller", () => {
   before(done => {
     User.remove({}, err => {
-      console.log(err);
+      if (err) console.log(err);
       done();
     });
   });
 
   describe("/POST Create Users", () => {
     it("it should create users", done => {
-      const user = {
+      const user = new User({
         email: "sisi@gmail.com",
         givenName: "sisi",
         familyName: "sisi"
-      };
+      });
 
       chai
         .request(server)
-        .post("/user")
+        .post(constants.users)
         .send(user)
         .end((err, res) => {
           res.should.have.status(200);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("User is created successfully!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have
+            .property("message")
+            .to.equal(getCreateUserSuccess);
+          expect(res.body).to.have.property("user");
+          res.body.user.should.have.property("created");
+          res.body.user.should.have.property("email").to.equal(user.email);
+          res.body.user.should.have
+            .property("givenName")
+            .to.equal(user.givenName);
+          res.body.user.should.have
+            .property("familyName")
+            .to.equal(user.familyName);
           done();
         });
     });
     it("it should not create users", done => {
-      const user = {
+      const user = new User({
         email: "sisi@gmail.com",
         givenName: "si",
         familyName: "sisi"
-      };
+      });
 
       chai
         .request(server)
-        .post("/user")
+        .post(constants.users)
         .send(user)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("User could not be created!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have.property("message").to.equal(getCreateUserError);
           done();
         });
     });
@@ -67,34 +91,27 @@ describe("User Management User Controller", () => {
 
   describe("/GET All Users", () => {
     it("it should return all users", done => {
-      let user = new User({
-        email: "didi@gmail.com",
-        givenName: "didi",
-        familyName: "didi"
-      });
-
-      User.create(user).then(user => {
-        chai
-          .request(server)
-          .get("/user")
-          .end((err, res) => {
-            res.should.have.status(200);
-            expect(res).to.be.json;
-            expect(res.body).to.have.property("users");
-            done();
-          });
-      });
+      chai
+        .request(server)
+        .get(constants.users)
+        .end((err, res) => {
+          res.should.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.have.property("users");
+          expect(res.body.users).to.be.an("array");
+          res.body.users.should.have.length.greaterThan(0);
+          done();
+        });
     });
     it("it should not return all users", done => {
       chai
         .request(server)
-        .get("/user?email=bnb")
+        .get(`${constants.users}?${FAKE_QUERY_PARAM}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("All users could not be loaded!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have.property("message").to.equal(getAllUsersError);
           done();
         });
     });
@@ -102,7 +119,7 @@ describe("User Management User Controller", () => {
 
   describe("/GET User By ID", () => {
     it("it should return user based on ID", done => {
-      let user = new User({
+      const user = new User({
         email: "fifi@gmail.com",
         givenName: "fifi",
         familyName: "fifi"
@@ -111,11 +128,12 @@ describe("User Management User Controller", () => {
       User.create(user).then(user => {
         chai
           .request(server)
-          .get("/user/" + user.id)
+          .get(`${constants.users}/${user.id}`)
           .end((err, res) => {
             res.should.have.status(200);
-            res.body.should.be.a("object");
-            res.body.should.have.property("user");
+            expect(res).to.be.json;
+            expect(res.body).to.have.property("user");
+            res.body.user.should.have.property("created");
             res.body.user.should.have.property("email").to.equal(user.email);
             res.body.user.should.have
               .property("givenName")
@@ -130,13 +148,12 @@ describe("User Management User Controller", () => {
     it("it should not return user based on ID", done => {
       chai
         .request(server)
-        .get("/user/5bc34397665471414e51f")
+        .get(`${constants.users}/${FAKE_ID}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("User could not be loaded!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have.property("message").to.equal(getUserError);
           done();
         });
     });
@@ -144,24 +161,28 @@ describe("User Management User Controller", () => {
 
   describe("/PUT User By ID", () => {
     it("it should update user based on ID", done => {
-      let user = new User({
+      const user = new User({
         email: "gigi@gmail.com",
         givenName: "gigi",
         familyName: "gigi"
       });
+      const updateEmail = "wiwi@gmail.com";
 
       User.create(user).then(user => {
         chai
           .request(server)
-          .put("/user/" + user.id)
-          .send({ email: "wiwi@gmail.com" })
+          .put(`${constants.users}/${user.id}`)
+          .send({ email: updateEmail })
           .end((err, res) => {
             res.should.have.status(200);
-            res.body.should.be.a("object");
-            res.body.should.have.property("user");
-            res.body.user.should.have
-              .property("email")
-              .to.equal("wiwi@gmail.com");
+            expect(res).to.be.json;
+            expect(res.body).to.have.property("message");
+            res.body.should.have
+              .property("message")
+              .to.equal(updateUserSuccess);
+            expect(res.body).to.have.property("user");
+            res.body.user.should.have.property("created");
+            res.body.user.should.have.property("email").to.equal(updateEmail);
             res.body.user.should.have
               .property("givenName")
               .to.equal(user.givenName);
@@ -173,16 +194,16 @@ describe("User Management User Controller", () => {
       });
     });
     it("it should not update user based on ID", done => {
+      const email = "didi@gmail.com";
       chai
         .request(server)
-        .put("/user/5bc34397665471414e51f")
-        .send({ email: "didi@gmail.com" })
+        .put(`${constants.users}/${FAKE_ID}`)
+        .send({ ...email })
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("User could not be updated!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have.property("message").to.equal(updateUserError);
           done();
         });
     });
@@ -190,7 +211,7 @@ describe("User Management User Controller", () => {
 
   describe("/DELETE User By ID", () => {
     it("it should delete user based on ID", done => {
-      let user = new User({
+      const user = new User({
         email: "kiki@gmail.com",
         givenName: "kiki",
         familyName: "kiki"
@@ -199,11 +220,16 @@ describe("User Management User Controller", () => {
       User.create(user).then(user => {
         chai
           .request(server)
-          .delete("/user/" + user.id)
+          .delete(`${constants.users}/${user.id}`)
           .end((err, res) => {
             res.should.have.status(200);
-            res.body.should.be.a("object");
-            res.body.should.have.property("user");
+            expect(res).to.be.json;
+            expect(res.body).to.have.property("message");
+            res.body.should.have
+              .property("message")
+              .to.equal(deleteUserSuccess);
+            expect(res.body).to.have.property("user");
+            res.body.user.should.have.property("created");
             res.body.user.should.have.property("email").to.equal(user.email);
             res.body.user.should.have
               .property("givenName")
@@ -218,13 +244,12 @@ describe("User Management User Controller", () => {
     it("it should not delete user based on ID", done => {
       chai
         .request(server)
-        .delete("/user/5bc34397665471414e51f")
+        .delete(`${constants.users}/${FAKE_ID}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
-          expect(res.body)
-            .to.have.property("message")
-            .to.equal("User could not be deleted!");
+          expect(res.body).to.have.property("message");
+          res.body.should.have.property("message").to.equal(deleteUserError);
           done();
         });
     });
@@ -234,10 +259,11 @@ describe("User Management User Controller", () => {
     it("it should get 404 status Not Found", done => {
       chai
         .request(server)
-        .get("/userfgf")
+        .get(`${constants.users}${FAKE_PATH}`)
         .end((err, res) => {
           res.should.have.status(404);
-          res.should.have.property("text").to.equal("Not Found");
+          expect(res).to.have.property("text");
+          res.should.have.property("text").to.equal(notFound);
           done();
         });
     });

@@ -1,11 +1,11 @@
 FROM node:6
 
-RUN mkdir /holiday-extras-server
-WORKDIR /holiday-extras-server
+RUN mkdir /user-server
+WORKDIR /user-server
 
 COPY package.json .
 
-RUN npm install --production
+RUN npm install
 
 COPY . .
 

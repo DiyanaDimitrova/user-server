@@ -17,8 +17,8 @@ app.use(
 db.initializeDB();
 routes.getRoutes(app);
 
-app.listen(config.port || 5000, () =>
-  console.log(`User Management app listening on port ${config.port || 5000}!`)
+app.listen(config.port, () =>
+  console.log(`User Management app listening on port ${config.port}!`)
 );
 
 module.exports = app;

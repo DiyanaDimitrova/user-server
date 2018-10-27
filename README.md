@@ -14,6 +14,7 @@ To run the application you need to run the following command
 
 ```
 $ yarn start
+$ yarn start:dev
 ```
 
 ## Testing

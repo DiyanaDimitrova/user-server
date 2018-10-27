@@ -2,11 +2,15 @@
 
 ## Setup
 
+To setup the application you need to have installed npm or yarn, and run the following command
+
 ```
 $ yarn install
 ```
 
 ## Running
+
+To run the application you need run the following command
 
 ```
 $ yarn start

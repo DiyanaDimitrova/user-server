@@ -11,6 +11,9 @@ module.exports = {
     app.put(constants.usersById, controllers.user.updateUser);
     app.delete(constants.usersById, controllers.user.deleteUser);
 
+    // posts routes
+    app.get(constants.posts, controllers.post.getAllPosts);
+
     app.all("*", (req, res) => {
       res.status(404);
       res.send(constants.notFound);

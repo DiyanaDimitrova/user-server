@@ -21,5 +21,6 @@ module.exports = {
     db.on("error", err => console.log("Database error: " + err));
 
     require("../models/User");
+    require("../models/Post").seedPosts();
   }
 };

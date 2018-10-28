@@ -41,13 +41,14 @@ User Management API
   - created - the date and time the user was added
 - Following CRUD operations are possible to be executed on the User model:
 
-| Method           | Purpose                 |
-| ---------------- | ----------------------- |
-| POST /user       | Create user             |
-| GET /user        | Return all users        |
-| GET /user/:id    | Return user based on ID |
-| PUT /user/:id    | Update user based on ID |
-| DELETE /user/:id | Remove user based on ID |
+| Method           | Purpose                                                   |
+| ---------------- | --------------------------------------------------------- |
+| POST /user       | Create user                                               |
+| GET /user        | Return all users                                          |
+| GET /user/:id    | Return user based on ID                                   |
+| PUT /user/:id    | Update user based on ID                                   |
+| DELETE /user/:id | Remove user based on ID                                   |
+| GET /posts       | Get all posts by tag and paginated for the front-end task |
 
 ## Docker
 

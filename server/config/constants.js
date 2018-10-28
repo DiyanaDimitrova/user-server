@@ -1,5 +1,6 @@
 module.exports.users = "/user";
 module.exports.usersById = "/user/:id";
+module.exports.posts = "/posts";
 module.exports.getAllUsersError = "All users could not be loaded!";
 module.exports.getCreateUserSuccess = "User is created successfully!";
 module.exports.getCreateUserError = "User could not be created!";
@@ -11,3 +12,4 @@ module.exports.deleteUserError = "User could not be deleted!";
 module.exports.invalidInput = "The provided data is not valid!";
 module.exports.noUser = "No user Found";
 module.exports.notFound = "Not Found";
+module.exports.getAllPostsError = "Posts could not be loaded!";

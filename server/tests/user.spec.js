@@ -11,6 +11,7 @@ const it = mocha.it;
 const should = chai.should();
 const expect = chai.expect;
 const {
+  users,
   getAllUsersError,
   getCreateUserSuccess,
   getCreateUserError,
@@ -47,7 +48,7 @@ describe("User Management User Controller", () => {
 
       chai
         .request(server)
-        .post(constants.users)
+        .post(users)
         .send(user)
         .end((err, res) => {
           res.should.have.status(200);
@@ -77,7 +78,7 @@ describe("User Management User Controller", () => {
 
       chai
         .request(server)
-        .post(constants.users)
+        .post(users)
         .send(user)
         .end((err, res) => {
           res.should.have.status(500);
@@ -93,7 +94,7 @@ describe("User Management User Controller", () => {
     it("it should return all users", done => {
       chai
         .request(server)
-        .get(constants.users)
+        .get(users)
         .end((err, res) => {
           res.should.have.status(200);
           expect(res).to.be.json;
@@ -106,7 +107,7 @@ describe("User Management User Controller", () => {
     it("it should not return all users", done => {
       chai
         .request(server)
-        .get(`${constants.users}?${FAKE_QUERY_PARAM}`)
+        .get(`${users}?${FAKE_QUERY_PARAM}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
@@ -128,7 +129,7 @@ describe("User Management User Controller", () => {
       User.create(user).then(user => {
         chai
           .request(server)
-          .get(`${constants.users}/${user.id}`)
+          .get(`${users}/${user.id}`)
           .end((err, res) => {
             res.should.have.status(200);
             expect(res).to.be.json;
@@ -148,7 +149,7 @@ describe("User Management User Controller", () => {
     it("it should not return user based on ID", done => {
       chai
         .request(server)
-        .get(`${constants.users}/${FAKE_ID}`)
+        .get(`${users}/${FAKE_ID}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
@@ -171,7 +172,7 @@ describe("User Management User Controller", () => {
       User.create(user).then(user => {
         chai
           .request(server)
-          .put(`${constants.users}/${user.id}`)
+          .put(`${users}/${user.id}`)
           .send({ email: updateEmail })
           .end((err, res) => {
             res.should.have.status(200);
@@ -197,7 +198,7 @@ describe("User Management User Controller", () => {
       const email = "didi@gmail.com";
       chai
         .request(server)
-        .put(`${constants.users}/${FAKE_ID}`)
+        .put(`${users}/${FAKE_ID}`)
         .send({ ...email })
         .end((err, res) => {
           res.should.have.status(500);
@@ -220,7 +221,7 @@ describe("User Management User Controller", () => {
       User.create(user).then(user => {
         chai
           .request(server)
-          .delete(`${constants.users}/${user.id}`)
+          .delete(`${users}/${user.id}`)
           .end((err, res) => {
             res.should.have.status(200);
             expect(res).to.be.json;
@@ -244,7 +245,7 @@ describe("User Management User Controller", () => {
     it("it should not delete user based on ID", done => {
       chai
         .request(server)
-        .delete(`${constants.users}/${FAKE_ID}`)
+        .delete(`${users}/${FAKE_ID}`)
         .end((err, res) => {
           res.should.have.status(500);
           expect(res).to.be.json;
@@ -259,7 +260,7 @@ describe("User Management User Controller", () => {
     it("it should get 404 status Not Found", done => {
       chai
         .request(server)
-        .get(`${constants.users}${FAKE_PATH}`)
+        .get(`${users}${FAKE_PATH}`)
         .end((err, res) => {
           res.should.have.status(404);
           expect(res).to.have.property("text");

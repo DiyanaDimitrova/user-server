@@ -7,8 +7,8 @@ module.exports = {
   getAllPosts: (req, res) => {
     const { page, limit, tags } = req.query;
     Post.paginate(tags ? { tags: tags } : {}, {
-      page: Number(page),
-      limit: Number(limit)
+      page: Number(page || 1),
+      limit: Number(limit || 10)
     })
       .then(posts => {
         const { docs, total, limit, page, pages } = posts;

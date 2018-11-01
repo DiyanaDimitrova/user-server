@@ -24,7 +24,7 @@ const newPost = () => {
     tags.push(faker.lorem.word());
   }
   return {
-    image: faker.image.imageUrl(200, 300, "cats", true, true),
+    image: "https://loremflickr.com/320/240", //faker.image.imageUrl(200, 300, "cats", true, true),
     title: faker.lorem.word(),
     titleUrl: faker.internet.url(),
     author: faker.name.findName(),

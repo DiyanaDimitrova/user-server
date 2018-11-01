@@ -20,16 +20,16 @@ const Post = mongoose.model("Post", postSchema);
 //creation of Post with fake data
 const newPost = () => {
   const tags = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     tags.push(faker.lorem.word());
   }
   return {
-    image: faker.image.avatar(),
+    image: faker.image.image(),
     title: faker.lorem.word(),
     titleUrl: faker.internet.url(),
     author: faker.name.findName(),
     authorUrl: faker.internet.url(),
-    description: faker.lorem.sentence(),
+    description: faker.lorem.words(),
     tags: tags
   };
 };

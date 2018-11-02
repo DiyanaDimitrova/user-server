@@ -24,8 +24,7 @@ const newPost = () => {
     tags.push(faker.lorem.word());
   }
   return {
-    // temporary solution till faker provide https access to the images
-    image: "https://loremflickr.com/320/240", // faker.image.imageUrl(200, 300, "cats", true, true),
+    image: faker.image.avatar(),
     title: faker.lorem.word(),
     titleUrl: faker.internet.url(),
     author: faker.name.findName(),

@@ -1,27 +1,31 @@
-// controller about posts
-const Post = require("../models/Post");
+const { Post } = require("../models/Post");
 const constants = require("../config/constants");
 
 module.exports = {
-  // retrieve all posts
-  getAllPosts: (req, res) => {
-    const { page, limit, tags } = req.query;
-    Post.paginate(tags ? { tags: tags } : {}, {
-      page: Number(page || 1),
-      limit: Number(limit || 10)
-    })
-      .then(posts => {
-        const { docs, total, limit, page, pages } = posts;
-        res.json({
-          total: total,
-          limit: limit,
-          page: page,
-          pages: pages,
-          posts: docs
-        });
-      })
-      .catch(err => {
-        res.status(500).json({ message: constants.getAllPostsError });
+  // Retrieve all posts with pagination and optional tag filtering
+  getAllPosts: async (req, res) => {
+    try {
+      const { page = 1, limit = 10, tags } = req.query;
+      const options = {
+        page: Number(page),
+        limit: Number(limit),
+      };
+
+      console.log("Post model methods:", Object.keys(Post));
+
+      const query = tags ? { tags } : {};
+      const posts = await Post.paginate(query, options);
+      console.log("posts", posts);
+      res.json({
+        total: posts.totalDocs,
+        limit: posts.limit,
+        page: posts.page,
+        totalPages: posts.totalPages,
+        posts: posts.docs,
       });
-  }
+    } catch (error) {
+      console.log("error", error);
+      res.status(500).json({ message: constants.getAllPostsError });
+    }
+  },
 };

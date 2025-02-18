@@ -1,104 +1,101 @@
-// controller about users
 const constants = require("../config/constants");
 const validator = require("../utils/validator");
-const User = require("../models/User");
+const { User } = require("../models/User");
 
-const {
-  getAllUsersError,
-  getCreateUserSuccess,
-  getCreateUserError,
-  getUserError,
-  updateUserSuccess,
-  updateUserError,
-  deleteUserSuccess,
-  deleteUserError,
-  invalidInput,
-  noUser
-} = constants;
+const { routes, userMessages, errorMessages } = constants;
 
 module.exports = {
-  // retrieve all users
-  getAllUsers: (req, res) => {
-    User.find(req.query)
-      .then(users => {
-        if (users.length === 0) {
-          throw new Error(noUser);
-        }
-        res.json({ users: users });
-      })
-      .catch(err => {
-        res.status(500).json({ message: getAllUsersError });
-      });
+  // Retrieve all users
+  getAllUsers: async (req, res) => {
+    try {
+      const users = await User.find(req.query);
+      if (!users.length) {
+        return res.status(404).json({ message: errorMessages.noUser });
+      }
+      res.json({ users });
+    } catch (error) {
+      res.status(500).json({ message: errorMessages.getAllUsersError });
+    }
   },
 
-  // create user
-  createUser: (req, res) => {
-    let { body: user } = req;
-    const { email, givenName, familyName } = user;
+  // Create user
+  createUser: async (req, res) => {
+    const { email, givenName, familyName } = req.body;
+
     if (
-      validator.isValidName(givenName) &&
-      validator.isValidName(familyName) &&
-      validator.isValidEmail(email)
+      !validator.isValidName(givenName) ||
+      !validator.isValidName(familyName) ||
+      !validator.isValidEmail(email)
     ) {
-      User.create(user)
-        .then(user => {
-          res.json({ user, message: getCreateUserSuccess });
-        })
-        .catch(err => {
-          res.status(500).json({ message: getCreateUserError });
-        });
-    } else {
-      res.status(500).json({ message: invalidInput });
+      return res.status(400).json({ message: userMessages.invalidInput });
+    }
+
+    try {
+      const user = await User.create(req.body);
+      res
+        .status(201)
+        .json({ user, message: userMessages.getCreateUserSuccess });
+    } catch (error) {
+      res.status(500).json({ message: userMessages.getCreateUserError });
     }
   },
 
-  // retrieve user by id
-  getUser: (req, res) => {
+  // Retrieve user by ID
+  getUser: async (req, res) => {
     const { id } = req.params;
-    if (id) {
-      User.findById(req.params.id)
-        .then(user => {
-          res.json({ user });
-        })
-        .catch(err => {
-          res.status(err.statusCode || 500).json({ message: getUserError });
-        });
-    } else {
-      res.status(500).json({ message: invalidInput });
+    if (!id) {
+      return res.status(400).json({ message: userMessages.invalidInput });
+    }
+
+    try {
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: userMessages.getUserError });
+      }
+      res.json({ user });
+    } catch (error) {
+      res.status(500).json({ message: userMessages.getUserError });
     }
   },
 
-  // update properties of user
-  updateUser: (req, res) => {
-    let { body: user } = req;
-    let { id } = req.params;
-    if (id && user) {
-      User.findByIdAndUpdate(id, { $set: user }, { new: true })
-        .exec()
-        .then(user => {
-          res.json({ user, message: updateUserSuccess });
-        })
-        .catch(err => {
-          res.status(err.statusCode || 500).json({ message: updateUserError });
-        });
-    } else {
-      res.status(500).json({ message: invalidInput });
-    }
-  },
-
-  // delete user
-  deleteUser: (req, res) => {
+  // Update user
+  updateUser: async (req, res) => {
     const { id } = req.params;
-    if (id) {
-      User.findByIdAndRemove(req.params.id)
-        .then(user => {
-          res.json({ user, message: deleteUserSuccess });
-        })
-        .catch(err => {
-          res.status(err.statusCode || 500).json({ message: deleteUserError });
-        });
-    } else {
-      res.status(500).json({ message: invalidInput });
+    const updates = req.body;
+    if (!id || !updates) {
+      return res.status(400).json({ message: userMessages.invalidInput });
     }
-  }
+
+    try {
+      const user = await User.findByIdAndUpdate(
+        id,
+        { $set: updates },
+        { new: true }
+      );
+      if (!user) {
+        return res.status(404).json({ message: userMessages.updateUserError });
+      }
+      res.json({ user, message: userMessages.updateUserSuccess });
+    } catch (error) {
+      res.status(500).json({ message: userMessages.updateUserError });
+    }
+  },
+
+  // Delete user
+  deleteUser: async (req, res) => {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: userMessages.invalidInput });
+    }
+
+    try {
+      const user = await User.findByIdAndDelete(id);
+      if (!user) {
+        return res.status(404).json({ message: userMessages.deleteUserError });
+      }
+      res.json({ user, message: userMessages.deleteUserSuccess });
+    } catch (error) {
+      res.status(500).json({ message: userMessages.deleteUserError });
+    }
+  },
 };

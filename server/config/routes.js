@@ -1,23 +1,28 @@
-// routes, exposed by the project
 const controllers = require("../controllers");
 const constants = require("./constants");
-const { users, usersById, posts, notFound } = constants;
+
+const { routes, errorMessages } = constants;
+
 module.exports = {
-  getRoutes: app => {
-    // user routes
-    app.get(users, controllers.user.getAllUsers);
-    app.get(usersById, controllers.user.getUser);
-    app.post(users, controllers.user.createUser);
-    app.put(usersById, controllers.user.updateUser);
-    app.delete(usersById, controllers.user.deleteUser);
+  getRoutes: (app) => {
+    // User routes
+    app
+      .route(routes.users)
+      .get(controllers.user.getAllUsers)
+      .post(controllers.user.createUser);
 
-    // posts routes
-    app.get(posts, controllers.post.getAllPosts);
+    app
+      .route(routes.usersById)
+      .get(controllers.user.getUser)
+      .put(controllers.user.updateUser)
+      .delete(controllers.user.deleteUser);
 
+    // Post routes
+    app.get(routes.posts, controllers.post.getAllPosts);
+
+    // Catch-all 404 route
     app.all("*", (req, res) => {
-      res.status(404);
-      res.send(notFound);
-      res.end();
+      res.status(404).send(errorMessages.notFound);
     });
-  }
+  },
 };

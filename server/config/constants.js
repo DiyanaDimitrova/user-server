@@ -1,15 +1,26 @@
-module.exports.users = "/user";
-module.exports.usersById = "/user/:id";
-module.exports.posts = "/posts";
-module.exports.getAllUsersError = "All users could not be loaded!";
-module.exports.getCreateUserSuccess = "User is created successfully!";
-module.exports.getCreateUserError = "User could not be created!";
-module.exports.getUserError = "User could not be loaded!";
-module.exports.updateUserSuccess = "User is updated successfully!";
-module.exports.updateUserError = "User could not be updated!";
-module.exports.deleteUserSuccess = "User is deleted successfully!";
-module.exports.deleteUserError = "User could not be deleted!";
-module.exports.invalidInput = "The provided data is not valid!";
-module.exports.noUser = "No user Found";
-module.exports.notFound = "Not Found";
-module.exports.getAllPostsError = "Posts could not be loaded!";
+// Routes
+module.exports.routes = {
+  users: "/users",
+  usersById: "/users/:id",
+  posts: "/posts",
+};
+
+// Success and Error Messages for Users
+module.exports.userMessages = {
+  getAllUsersError: "All users could not be loaded!",
+  getCreateUserSuccess: "User is created successfully!",
+  getCreateUserError: "User could not be created!",
+  getUserError: "User could not be loaded!",
+  updateUserSuccess: "User is updated successfully!",
+  updateUserError: "User could not be updated!",
+  deleteUserSuccess: "User is deleted successfully!",
+  deleteUserError: "User could not be deleted!",
+  invalidInput: "The provided data is not valid!",
+  noUser: "No user found",
+};
+
+// General Error Messages
+module.exports.errorMessages = {
+  notFound: "Not Found",
+  getAllPostsError: "Posts could not be loaded!",
+};

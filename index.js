@@ -2,7 +2,8 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const db = require("./server/config/database");
+const database = require("./server/config/database");
+const db = require("./server/config/db");
 const routes = require("./server/config/routes");
 const config = require("./server/config/config")[
   process.env.NODE_ENV || "development"
@@ -13,10 +14,11 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
-db.initializeDB();
+database.initializeDB();
+db.connectDB();
 routes.getRoutes(app);
 
 app.listen(config.port, () =>

@@ -5,6 +5,12 @@ module.exports.routes = {
   posts: "/posts",
 };
 
+module.exports.routesAlt = {
+  user: "/user",
+  userById: "/user/:id",
+  post: "/post",
+};
+
 // Success and Error Messages for Users
 module.exports.userMessages = {
   getAllUsersError: "All users could not be loaded!",

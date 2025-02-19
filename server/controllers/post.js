@@ -1,4 +1,5 @@
 const { Post } = require("../models/Post");
+const { PostDTO } = require("../models/PostDTO");
 const constants = require("../config/constants");
 
 module.exports = {
@@ -11,11 +12,8 @@ module.exports = {
         limit: Number(limit),
       };
 
-      console.log("Post model methods:", Object.keys(Post));
-
       const query = tags ? { tags } : {};
       const posts = await Post.paginate(query, options);
-      console.log("posts", posts);
       res.json({
         total: posts.totalDocs,
         limit: posts.limit,
@@ -26,6 +24,24 @@ module.exports = {
     } catch (error) {
       console.log("error", error);
       res.status(500).json({ message: constants.getAllPostsError });
+    }
+  },
+  getAllPostsAlt: async (req, res) => {
+    try {
+      const posts = await PostDTO.findAll(); // Or Post.find() for Mongoose
+
+      if (!posts) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No posts found" });
+      }
+
+      res.json({ success: true, data: posts });
+    } catch (error) {
+      console.log("object", error);
+      res
+        .status(500)
+        .json({ success: false, error: constants.getAllPostsError });
     }
   },
 };

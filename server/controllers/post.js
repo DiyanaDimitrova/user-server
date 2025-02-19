@@ -22,7 +22,6 @@ module.exports = {
         posts: posts.docs,
       });
     } catch (error) {
-      console.log("error", error);
       res.status(500).json({ message: constants.getAllPostsError });
     }
   },
@@ -38,7 +37,7 @@ module.exports = {
 
       res.json({ success: true, data: posts });
     } catch (error) {
-      console.log("object", error);
+      console.log("Error fetching posts:", error);
       res
         .status(500)
         .json({ success: false, error: constants.getAllPostsError });

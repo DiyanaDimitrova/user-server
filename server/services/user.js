@@ -17,7 +17,7 @@ class UserService {
 
     const users = await User.find(query);
     if (!users.length) {
-      throw new Error(errorMessages.noUser);
+      throw new Error(userMessages.noUser);
     }
 
     await redis.set(cacheKey, JSON.stringify(users), "EX", 3600);

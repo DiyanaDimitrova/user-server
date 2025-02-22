@@ -1,3 +1,4 @@
+const { userMessages } = require("../config/constants");
 const userService = require("../services/user");
 
 module.exports = {
@@ -40,7 +41,7 @@ module.exports = {
   deleteUser: async (req, res) => {
     try {
       await userService.deleteUser(req.params.id);
-      res.json({ message: "User deleted successfully" });
+      res.json({ message: userMessages.deleteUserSuccess });
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
@@ -85,7 +86,7 @@ module.exports = {
   deleteUserAlt: async (req, res) => {
     try {
       await userService.deleteUserAlt(req.params.id);
-      res.json({ message: "User deleted successfully" });
+      res.json({ message: userMessages.deleteUserSuccess });
     } catch (error) {
       res.status(404).json({ message: error.message });
     }

@@ -15,10 +15,7 @@ const constants = require("../config/constants");
 const { routes, userMessages, errorMessages } = constants;
 const userService = require("../services/user");
 
-const FAKE_ID = "5bc34397665471414e51f";
-const FAKE_PATH = "fgf";
-
-describe("User Management User Controller", () => {
+describe("User Controller", () => {
   let serviceStub;
 
   beforeEach((done) => {
@@ -238,7 +235,7 @@ describe("User Management User Controller", () => {
           expect(res.body).to.have.property("message");
           res.body.should.have
             .property("message")
-            .to.equal("User deleted successfully");
+            .to.equal(userMessages.deleteUserSuccess);
 
           sinon.assert.calledOnce(serviceStub);
           done();

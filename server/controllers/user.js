@@ -1,292 +1,93 @@
-const constants = require("../config/constants");
-const validator = require("../utils/validator");
-const redis = require("../config/redis");
-const { User } = require("../models/User");
-const { UserDTO } = require("../models/UserDTO");
-
-const { routes, userMessages, errorMessages } = constants;
+const userService = require("../services/user");
 
 module.exports = {
-  // Retrieve all users
   getAllUsers: async (req, res) => {
-    const cacheKey = "users";
     try {
-      // Check if data is cached
-      const cachedUsers = await redis.get(cacheKey);
-      if (cachedUsers) {
-        console.log("Serving users from cache...");
-        return res.json({ users: JSON.parse(cachedUsers) });
-      }
-
-      // Fetch from database if not cached
-      const users = await User.find(req.query);
-      if (!users.length) {
-        return res.status(404).json({ message: errorMessages.noUser });
-      }
-
-      // Cache the result for 1 hour
-      await redis.set(cacheKey, JSON.stringify(users), "EX", 3600);
-
+      const users = await userService.getAllUsers(req.query);
       res.json({ users });
     } catch (error) {
-      res.status(500).json({ message: errorMessages.getAllUsersError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Retrieve user by ID
   getUser: async (req, res) => {
-    const { id } = req.params;
-    const cacheKey = `user:${id}`;
-
-    if (!id) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      // Check if data is cached
-      const cachedUser = await redis.get(cacheKey);
-      if (cachedUser) {
-        console.log(`Serving user ${id} from cache...`);
-        return res.json({ user: JSON.parse(cachedUser) });
-      }
-
-      // Fetch from database if not cached
-      const user = await User.findById(id);
-      if (!user) {
-        return res.status(404).json({ message: userMessages.getUserError });
-      }
-
-      // Cache the result for 1 hour
-      await redis.set(cacheKey, JSON.stringify(user), "EX", 3600);
-
+      const user = await userService.getUser(req.params.id);
       res.json({ user });
     } catch (error) {
-      res.status(500).json({ message: userMessages.getUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Create user
   createUser: async (req, res) => {
-    const { email, givenName, familyName } = req.body;
-
-    if (
-      !validator.isValidName(givenName) ||
-      !validator.isValidName(familyName) ||
-      !validator.isValidEmail(email)
-    ) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const user = await User.create(req.body);
-
-      // Clear relevant caches
-      await redis.del("users");
-
-      res
-        .status(201)
-        .json({ user, message: userMessages.getCreateUserSuccess });
+      const user = await userService.createUser(req.body);
+      res.status(201).json({ user });
     } catch (error) {
-      res.status(500).json({ message: userMessages.getCreateUserError });
+      res.status(400).json({ message: error.message });
     }
   },
 
-  // Update user
   updateUser: async (req, res) => {
-    const { id } = req.params;
-    const updates = req.body;
-    const cacheKey = `user:${id}`;
-
-    if (!id || !updates) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const user = await User.findByIdAndUpdate(
-        id,
-        { $set: updates },
-        { new: true }
-      );
-      if (!user) {
-        return res.status(404).json({ message: userMessages.updateUserError });
-      }
-
-      // Clear relevant caches
-      await redis.del("users");
-      await redis.del(cacheKey);
-
-      res.json({ user, message: userMessages.updateUserSuccess });
+      const user = await userService.updateUser(req.params.id, req.body);
+      res.json({ user });
     } catch (error) {
-      res.status(500).json({ message: userMessages.updateUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Delete user
   deleteUser: async (req, res) => {
-    const { id } = req.params;
-    const cacheKey = `user:${id}`;
-
-    if (!id) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const user = await User.findByIdAndDelete(id);
-      if (!user) {
-        return res.status(404).json({ message: userMessages.deleteUserError });
-      }
-
-      // Clear relevant caches
-      await redis.del("users");
-      await redis.del(cacheKey);
-
-      res.json({ user, message: userMessages.deleteUserSuccess });
+      await userService.deleteUser(req.params.id);
+      res.json({ message: "User deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: userMessages.deleteUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 
   getAllUsersAlt: async (req, res) => {
-    const cacheKey = "usersAlt";
     try {
-      // Check if data is cached
-      const cachedUsers = await redis.get(cacheKey);
-      if (cachedUsers) {
-        console.log("Serving PostgreSQL users from cache...");
-        return res.json({ users: JSON.parse(cachedUsers) });
-      }
-
-      // Fetch from database if not cached
-      const users = await UserDTO.findAll({ where: req.query });
-      if (!users.length) {
-        return res.status(404).json({ message: errorMessages.noUser });
-      }
-
-      // Cache the result for 1 hour
-      await redis.set(cacheKey, JSON.stringify(users), "EX", 3600);
-
+      const users = await userService.getAllUsersAlt(req.query);
       res.json({ users });
     } catch (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ message: errorMessages.getAllUsersError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Retrieve user by ID
   getUserAlt: async (req, res) => {
-    const { id } = req.params;
-    const cacheKey = `userAlt:${id}`;
-
-    if (!id) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      // Check if data is cached
-      const cachedUser = await redis.get(cacheKey);
-      if (cachedUser) {
-        console.log(`Serving PostgreSQL user ${id} from cache...`);
-        return res.json({ user: JSON.parse(cachedUser) });
-      }
-
-      // Fetch from database if not cached
-      const user = await UserDTO.findByPk(id);
-      if (!user) {
-        return res.status(404).json({ message: userMessages.getUserError });
-      }
-
-      // Cache the result for 1 hour
-      await redis.set(cacheKey, JSON.stringify(user), "EX", 3600);
-
+      const user = await userService.getUserAlt(req.params.id);
       res.json({ user });
     } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: userMessages.getUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Create user
   createUserAlt: async (req, res) => {
-    const { email, givenName, familyName } = req.body;
-
-    if (
-      !validator.isValidName(givenName) ||
-      !validator.isValidName(familyName) ||
-      !validator.isValidEmail(email)
-    ) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const user = await UserDTO.create({ email, givenName, familyName });
-
-      // Clear relevant caches
-      await redis.del("usersAlt");
-
-      res
-        .status(201)
-        .json({ user, message: userMessages.getCreateUserSuccess });
+      const user = await userService.createUserAlt(req.body);
+      res.status(201).json({ user });
     } catch (error) {
-      console.error("Error creating user:", error);
-      res.status(500).json({ message: userMessages.getCreateUserError });
+      res.status(400).json({ message: error.message });
     }
   },
 
-  // Update user
   updateUserAlt: async (req, res) => {
-    const { id } = req.params;
-    const updates = req.body;
-    const cacheKey = `userAlt:${id}`;
-
-    if (!id || !Object.keys(updates).length) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const [updatedRows, [updatedUser]] = await UserDTO.update(updates, {
-        where: { id },
-        returning: true,
-      });
-
-      if (!updatedRows) {
-        return res.status(404).json({ message: userMessages.updateUserError });
-      }
-
-      // Clear relevant caches
-      await redis.del("usersAlt");
-      await redis.del(cacheKey);
-
-      res.json({ user: updatedUser, message: userMessages.updateUserSuccess });
+      const user = await userService.updateUserAlt(req.params.id, req.body);
+      res.json({ user });
     } catch (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ message: userMessages.updateUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 
-  // Delete user
   deleteUserAlt: async (req, res) => {
-    const { id } = req.params;
-    const cacheKey = `userAlt:${id}`;
-
-    if (!id) {
-      return res.status(400).json({ message: userMessages.invalidInput });
-    }
-
     try {
-      const deletedRows = await UserDTO.destroy({ where: { id } });
-
-      if (!deletedRows) {
-        return res.status(404).json({ message: userMessages.deleteUserError });
-      }
-
-      // Clear relevant caches
-      await redis.del("usersAlt");
-      await redis.del(cacheKey);
-
-      res.json({ message: userMessages.deleteUserSuccess });
+      await userService.deleteUserAlt(req.params.id);
+      res.json({ message: "User deleted successfully" });
     } catch (error) {
-      console.error("Error deleting user:", error);
-      res.status(500).json({ message: userMessages.deleteUserError });
+      res.status(404).json({ message: error.message });
     }
   },
 };

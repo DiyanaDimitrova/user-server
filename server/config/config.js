@@ -9,18 +9,17 @@ const db = "Cluster0";
 module.exports = {
   development: {
     rootPath: rootPath,
-    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
+    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=${db}`,
     port: 3001,
   },
   test: {
     rootPath: rootPath,
-    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
+    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=${db}`,
     port: 3002,
   },
   production: {
     rootPath: rootPath,
-    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-`,
+    db: `mongodb+srv://${user}:${password}@cluster0.j5yds.mongodb.net/?retryWrites=true&w=majority&appName=${db}`,
     port: process.env.PORT,
   },
 };
